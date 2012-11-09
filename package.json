@@ -1,0 +1,19 @@
+{
+  "name": "nko3-script",
+  "version": "0.0.0",
+  "description": "</script>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:nko3/script.git"
+  },
+  "dependencies": {
+  },
+  "engines": {
+    "node": "0.8.x"
+  },
+  "subdomain": "script.nko3"
+}
