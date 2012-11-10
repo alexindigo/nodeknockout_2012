@@ -96,10 +96,19 @@ function processFile(req, res)
       'Content-Type': 'text/html'
     });
 
-    for (var i=0; i<tiles.length; i++)
+    _.chain(tiles).sortBy('count').sortBy('letter').each(function(tile)
     {
-      res.write('<div style="background-color: rgb('+tiles[i].color[0]+','+tiles[i].color[1]+','+tiles[i].color[2]+');"><p>'+i+'. '+tiles[i].type+'</p><img src="'+tiles[i].canvas.toDataURL()+'"></div><br><br>\n');
-    }
+      res.write('<div style="background-color: rgb('+tile.color[0]+','+tile.color[1]+','+tile.color[2]+');">'+(tile.letter ? '<h1>'+tile.letter.toUpperCase()+'</h1>' : '')+'<p>'+tile.pos+'. '+tile.type+', '+tile.count+'</p>');
+      res.write('<dl>');
+      _.each(tile.colorCount, function(num, color)
+      {
+        if (num < 10) return;
+        res.write('<dt>'+color+'</dt><dd>'+num+'</dd>');
+      });
+      res.write('</dl>');
+      res.write('<img src="'+tile.canvas.toDataURL()+'"></div><br><br>\n');
+//console.log([tile.count, tile.canvas.toDataURL().substr(100, 100)]);
+    });
 
     res.end();
   });
