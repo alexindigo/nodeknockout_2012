@@ -89,23 +89,19 @@ function processFile(req, res)
 
   form.on('file', function(name, file)
   {
-    var stream = image(file.path)[req.qs.pos ? req.qs.pos-1 : 0].canvas.createPNGStream();
+    var tiles = image(file.path);
 
     res.writeHead(200,
     {
-      'Content-Type': 'image/png'
+      'Content-Type': 'text/html'
     });
 
-    stream.on('data', function(data)
+    for (var i=0; i<tiles.length; i++)
     {
-      res.write(data);
-    });
+      res.write('<div><p>'+i+'. '+tiles[i].type+'</p><img src="'+tiles[i].canvas.toDataURL()+'"></div><br><br>\n');
+    }
 
-    stream.on('end', function()
-    {
-      res.end();
-    });
-
+    res.end();
   });
 
 
