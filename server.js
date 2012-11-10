@@ -98,7 +98,7 @@ function processFile(req, res)
 
     for (var i=0; i<tiles.length; i++)
     {
-      res.write('<div><p>'+i+'. '+tiles[i].type+'</p><img src="'+tiles[i].canvas.toDataURL()+'"></div><br><br>\n');
+      res.write('<div style="background-color: rgb('+tiles[i].color[0]+','+tiles[i].color[1]+','+tiles[i].color[2]+');"><p>'+i+'. '+tiles[i].type+'</p><img src="'+tiles[i].canvas.toDataURL()+'"></div><br><br>\n');
     }
 
     res.end();
