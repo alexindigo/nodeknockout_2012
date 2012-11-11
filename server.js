@@ -76,6 +76,9 @@ app.route('*').files(Config.path);
 // {{{ start server
 app.httpServer.listen(Config.port, Config.host);
 console.log('Listening on '+(Config.host ? Config.host : '')+':'+Config.port);
+
+// init words
+words();
 // }}}
 
 
@@ -104,6 +107,7 @@ function processFile(req, res)
         _.forEach(result, function(o)
         {
           res.write('<div>');
+
 
           res.write('<p>'+o.word+' ['+o.points+']</p>');
 
