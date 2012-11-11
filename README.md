@@ -17,3 +17,5 @@ Letterjitsu to the Letterpress is what automatic transmission to road trips.
 * Profit.
 
 *Letterpress available for iOS only. Letterjitsu supports iPhones and iPod Touches for now.*
+
+*Please note that Letterpress and Letterjitsu dictionaries aren't 100% compatible.*
