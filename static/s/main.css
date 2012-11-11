@@ -1,3 +1,7 @@
+*
+{
+  font-family: "Ubuntu", sans-serif;
+}
 input
 {
   font-size: 36px;
@@ -13,4 +17,56 @@ input
   width: 128px;
   height: 128px;
   color: transparent;
+}
+
+h1
+{
+  padding: 55px 10px;
+}
+h2
+{
+  margin: -110px 0px 200px;
+}
+
+
+#filebox
+{
+  position: absolute;
+  opacity: 0;
+}
+#filebox ~ label
+{
+  padding: 20px 40px;
+  font-size: 72px;
+  color: #000000;
+  text-transform: uppercase;
+  background-color: #77c8f5;
+  white-space: nowrap;
+  cursor: pointer;
+}
+#filebox ~ input
+{
+  -webkit-appearance: none;
+  padding: 20px 40px;
+  font-size: 72px;
+  color: #000000;
+  text-transform: uppercase;
+  background-color: #f7998d;
+  text-transform: uppercase;
+  border: 0px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+  #filebox:invalid ~ input
+  {
+    display: none;
+  }
+  #filebox:valid ~ label
+  {
+    display: none;
+  }
+
+#nko_button
+{
+  margin-top: 100px;
 }

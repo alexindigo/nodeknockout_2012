@@ -4,7 +4,7 @@ Letterjitsu is a companion to the Letterpress - Word Game™.
 
 Letterpress combines struggles of Scramble with joy of Chess, Letterjitsu reduces the struggle.
 
-Letterjitsu to the Letterpress is what automatic transmission to the road trips.
+Letterjitsu to the Letterpress is what automatic transmission to road trips.
 
 ## Instructions
 
