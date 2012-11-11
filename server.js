@@ -7,8 +7,10 @@ var path   = require('path')
   , Form   = require('formidable')
 
   , image  = require('./lib/image')
+  , words  = require('./lib/words')
 
   // globals
+  , db
 
   // settings
   , Config =
@@ -72,12 +74,10 @@ app.route('*').files(Config.path);
 
 
 // {{{ start server
-
 app.httpServer.listen(Config.port, Config.host);
-
 console.log('Listening on '+(Config.host ? Config.host : '')+':'+Config.port);
-
 // }}}
+
 
 // {{{ Main thing
 
@@ -89,26 +89,46 @@ function processFile(req, res)
 
   form.on('file', function(name, file)
   {
-    image(file.path, function(err, tiles)
+    image(file.path, function(err, letters)
     {
-      if (err) return res.end({status: 'error', data: (err.message ? err.message : err ) });
+      if (err) return requestError(res, err);
 
-      res.writeHead(200,
+      // get words
+      words(letters, function(err, result)
       {
-        'Content-Type': 'text/html'
+        res.writeHead(200,
+        {
+          'Content-Type': 'text/html'
+        });
+
+        _.forEach(result, function(o)
+        {
+          res.write('<div>');
+
+          res.write('<p>'+o.word+' ['+o.points+']</p>');
+
+          res.write('</div>');
+        });
+
+/*
+{ word: 'speer',
+    chars: { s: 1, p: 1, e: 2, r: 1 },
+    points: 6 },
+*/
+
+        // _.chain(letters).sortBy(function(f){ return f.counts.count}).sortBy('letter').each(function(tile)
+        // {
+        //   res.write('<div style="background-color: rgb('+tile.color[0]+','+tile.color[1]+','+tile.color[2]+');">');
+        //   res.write('<p>'+tile.pos+'. '+tile.type+', '+tile.counts.count+' = '+tile.counts.left+' + '+tile.counts.right+'</p>');
+
+        //   res.write((tile.letter ? '<h1 style="float: left; font-size: 72px; margin: 20px 10px 10px 10px;">'+tile.letter.toUpperCase()+'</h1>' : ''));
+        //   res.write('<img src="'+tile.canvas.toDataURL()+'"></div><br><br>\n');
+        // });
+
+        res.end();
+
+
       });
-
-      _.chain(tiles).sortBy(function(f){ return f.counts.count}).sortBy('letter').each(function(tile)
-      {
-        res.write('<div style="background-color: rgb('+tile.color[0]+','+tile.color[1]+','+tile.color[2]+');">');
-        res.write('<p>'+tile.pos+'. '+tile.type+', '+tile.counts.count+' = '+tile.counts.left+' + '+tile.counts.right+'</p>');
-
-        res.write((tile.letter ? '<h1 style="float: left; font-size: 72px; margin: 20px 10px 10px 10px;">'+tile.letter.toUpperCase()+'</h1>' : ''));
-        res.write('<img src="'+tile.canvas.toDataURL()+'"></div><br><br>\n');
-      });
-
-      res.end();
-
 
     });
   });
@@ -120,6 +140,12 @@ function processFile(req, res)
 
 
 // {{{ Santa's little helpers
+
+// generic error hanlder
+function requestError(res, err)
+{
+  res.end({status: 'error', data: (err.message ? err.message : err ) });
+}
 
 // generic resourse not found error
 function fileNotFound(res)
