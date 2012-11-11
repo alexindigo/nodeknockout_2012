@@ -2,3 +2,15 @@ input
 {
   font-size: 36px;
 }
+.word
+{
+  margin-bottom: 50px;
+  white-space: nowrap;
+}
+.letter
+{
+  display: inline-block;
+  width: 128px;
+  height: 128px;
+  color: transparent;
+}

@@ -36,8 +36,8 @@ if (Config.index[0] != '/') Config.index = path.join(Config.path, Config.index);
 
 // {{{ define routing
 
-// api
-app.route('/api/:action', function(req, res)
+// pages
+app.route('/process', function(req, res)
 {
   // just to make it safe
   req.qs = req.qs || {};
@@ -48,21 +48,13 @@ app.route('/api/:action', function(req, res)
     res.end({status: 'error', data: (err.message ? err.message : err ) });
   });
 
-  switch (req.params.action)
+  if (req.method == 'POST')
   {
-    case 'upload':
-      if (req.method == 'POST')
-      {
-        processFile(req, res);
-      }
-      else
-      {
-        methodNotAllowed(res);
-      }
-      break;
-
-    default:
-      return fileNotFound(res);
+    processFile(req, res);
+  }
+  else
+  {
+    methodNotAllowed(res);
   }
 });
 
@@ -99,37 +91,56 @@ function processFile(req, res)
       // get words
       words(letters, function(err, result)
       {
+        var letterPrefix = {};
+
         res.writeHead(200,
         {
           'Content-Type': 'text/html'
         });
 
-        _.forEach(result, function(o)
+        res.write('<!doctype html><html><head><meta charset="utf-8"><title>letter•jit•su</title><link rel="stylesheet" href="/s/main.css">');
+        res.write('<style>');
+
+        _.chain(letters).each(function(tile)
         {
-          res.write('<div>');
+          var className;
 
+          if (!(tile.letter in letterPrefix)) letterPrefix[tile.letter] = '';
 
-          res.write('<p>'+o.word+' ['+o.points+']</p>');
+          className = '.letter_'+tile.letter;
+          res.write(letterPrefix[tile.letter] + className);
+          res.write('{');
+          res.write('background-image: url("'+tile.canvas.toDataURL()+'");');
+          res.write('}\n');
 
-          res.write('</div>');
+          // update prefix
+          letterPrefix[tile.letter] += className + ' ~ ';
+
+          // res.write('<div style="background-color: rgb('+tile.color[0]+','+tile.color[1]+','+tile.color[2]+');">');
+          // res.write('<p>'+tile.pos+'. '+tile.type+', '+tile.counts.count+' = '+tile.counts.left+' + '+tile.counts.right+'</p>');
+
+          // res.write((tile.letter ? '<h1 style="float: left; font-size: 72px; margin: 20px 10px 10px 10px;">'+tile.letter.toUpperCase()+'</h1>' : ''));
+          // res.write('<img src="'+tile.canvas.toDataURL()+'"></div><br><br>\n');
         });
 
-/*
-{ word: 'speer',
-    chars: { s: 1, p: 1, e: 2, r: 1 },
-    points: 6 },
-*/
+        res.write('</style>');
+        res.write('<body>\n');
 
-        // _.chain(letters).sortBy(function(f){ return f.counts.count}).sortBy('letter').each(function(tile)
-        // {
-        //   res.write('<div style="background-color: rgb('+tile.color[0]+','+tile.color[1]+','+tile.color[2]+');">');
-        //   res.write('<p>'+tile.pos+'. '+tile.type+', '+tile.counts.count+' = '+tile.counts.left+' + '+tile.counts.right+'</p>');
+        _.forEach(_.head(result, 100), function(o)
+        {
+          var used, i, current;
 
-        //   res.write((tile.letter ? '<h1 style="float: left; font-size: 72px; margin: 20px 10px 10px 10px;">'+tile.letter.toUpperCase()+'</h1>' : ''));
-        //   res.write('<img src="'+tile.canvas.toDataURL()+'"></div><br><br>\n');
-        // });
+          res.write('<div class="word">');
 
-        res.end();
+          for (i=0; i<o.word.length; i++)
+          {
+            res.write('<span class="letter letter_'+o.word[i]+'">'+o.word[i]+'</span>');
+          }
+
+          res.write('</div>\n');
+        });
+
+        res.end('</body></html>');
 
 
       });
