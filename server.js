@@ -89,28 +89,28 @@ function processFile(req, res)
 
   form.on('file', function(name, file)
   {
-    var tiles = image(file.path);
-
-    res.writeHead(200,
+    image(file.path, function(err, tiles)
     {
-      'Content-Type': 'text/html'
-    });
+      if (err) return res.end({status: 'error', data: (err.message ? err.message : err ) });
 
-    _.chain(tiles).sortBy('count').sortBy('letter').each(function(tile)
-    {
-      res.write('<div style="background-color: rgb('+tile.color[0]+','+tile.color[1]+','+tile.color[2]+');">'+(tile.letter ? '<h1>'+tile.letter.toUpperCase()+'</h1>' : '')+'<p>'+tile.pos+'. '+tile.type+', '+tile.count+'</p>');
-      res.write('<dl>');
-      _.each(tile.colorCount, function(num, color)
+      res.writeHead(200,
       {
-        if (num < 10) return;
-        res.write('<dt>'+color+'</dt><dd>'+num+'</dd>');
+        'Content-Type': 'text/html'
       });
-      res.write('</dl>');
-      res.write('<img src="'+tile.canvas.toDataURL()+'"></div><br><br>\n');
-//console.log([tile.count, tile.canvas.toDataURL().substr(100, 100)]);
-    });
 
-    res.end();
+      _.chain(tiles).sortBy(function(f){ return f.counts.count}).sortBy('letter').each(function(tile)
+      {
+        res.write('<div style="background-color: rgb('+tile.color[0]+','+tile.color[1]+','+tile.color[2]+');">');
+        res.write('<p>'+tile.pos+'. '+tile.type+', '+tile.counts.count+' = '+tile.counts.left+' + '+tile.counts.right+'</p>');
+
+        res.write((tile.letter ? '<h1 style="float: left; font-size: 72px; margin: 20px 10px 10px 10px;">'+tile.letter.toUpperCase()+'</h1>' : ''));
+        res.write('<img src="'+tile.canvas.toDataURL()+'"></div><br><br>\n');
+      });
+
+      res.end();
+
+
+    });
   });
 
 
